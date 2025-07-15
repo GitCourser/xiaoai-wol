@@ -1,5 +1,11 @@
 {
     "key": "testkey",
     "mac": "00-E0-70-EC-FF-FF",
-    "port": 3030
+    "port": 3030,
+    "mqtt": {
+        "client_id": "xiaoai_client",
+        "server": "localhost",
+        "port": 1883,
+        "topic": "xiaoai/control"
+    }
 }
