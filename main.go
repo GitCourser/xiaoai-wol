@@ -16,8 +16,8 @@ var (
 
 type Request struct {
 	Request struct {
-		Type int `json:"type"`
-		Intent struct {
+		Type     int8 `json:"type"`
+		Intent   struct {
 			Query string `json:"query"`
 		} `json:"intent"`
 		NoResponse bool `json:"no_response"`
@@ -25,17 +25,17 @@ type Request struct {
 }
 
 type Response struct {
-	Version string `json:"version"`
-	IsEnd bool `json:"is_session_end"`
+	Version  string `json:"version"`
+	IsEnd    bool   `json:"is_session_end"`
 	Response struct {
 		NotUnderstand bool `json:"not_understand"`
-		OpenMic bool `json:"open_mic"`
-		ToSpeak struct {
-			Type int `json:"type"`
+		OpenMic       bool `json:"open_mic"`
+		ToSpeak       struct {
+			Type int8   `json:"type"`
 			Text string `json:"text"`
 		} `json:"to_speak"`
 		ToDisplay struct {
-			Type int `json:"type"`
+			Type int8   `json:"type"`
 			Text string `json:"text"`
 		} `json:"to_display"`
 	} `json:"response"`
@@ -53,14 +53,14 @@ func main() {
 	var mqttManager *MQTTManager
 	if config.MQTT.Server != "" && config.MQTT.Topic != "" {
 		mqttManager = NewMQTTManager(config.MQTT, config.Mac)
-		
+
 		// 尝试连接MQTT服务器（非阻塞）
 		go func() {
 			if err := mqttManager.Connect(); err != nil {
 				log.Printf("MQTT连接失败: %v", err)
 			}
 		}()
-		
+
 		log.Printf("MQTT管理器已初始化，服务器: %s:%d, 主题: %s", 
 			config.MQTT.Server, config.MQTT.Port, config.MQTT.Topic)
 	} else {
@@ -80,12 +80,12 @@ func main() {
 
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", config.Port), nil); err != nil {
 		fmt.Printf("HTTP服务器启动失败: %v\n", err)
-		
+
 		// 清理MQTT连接
 		if mqttManager != nil {
 			mqttManager.Disconnect()
 		}
-		
+
 		os.Exit(1)
 	}
 }
@@ -95,26 +95,24 @@ func setupRoutes(config Config, mqttManager *MQTTManager) {
 	http.HandleFunc("/", handleRoot)
 	http.HandleFunc("/top", handleTop)
 	http.HandleFunc("/restart", handleRestart)
-	
+
 	http.HandleFunc("/toggle-debug", func(w http.ResponseWriter, r *http.Request) {
 		handleToggleDebug(w, r, &debugXiaoai, &lastXiaoaiRequest, &mu)
 	})
-	
+
 	http.HandleFunc("/get-last-request", func(w http.ResponseWriter, r *http.Request) {
 		handleGetLastRequest(w, r, &debugXiaoai, &lastXiaoaiRequest, &mu)
 	})
-	
+
 	http.HandleFunc("/wol", func(w http.ResponseWriter, r *http.Request) {
 		handleWol(w, r, config)
 	})
-	
+
 	http.HandleFunc("/xiaoai", func(w http.ResponseWriter, r *http.Request) {
 		handleXiaoai(w, r, config, &debugXiaoai, &lastXiaoaiRequest, &mu)
 	})
-	
-	// 添加MQTT状态API端点
+
 	http.HandleFunc("/mqtt-status", func(w http.ResponseWriter, r *http.Request) {
 		handleMQTTStatus(w, r, mqttManager)
 	})
 }
-

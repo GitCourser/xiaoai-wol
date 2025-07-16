@@ -50,10 +50,10 @@ func LoadConfig(filename string) (*Config, error) {
 func setDefaults(config *Config) {
 	// 设置基本配置的默认值
 	if config.XiaoaiKey == "" {
-		config.XiaoaiKey = "testkey"
+		config.XiaoaiKey = "xiaoaikey"
 	}
 	if config.Mac == "" {
-		config.Mac = "00-E0-70-EC-FF-FF"
+		config.Mac = "00-00-00-FF-FF-FF"
 	}
 	if config.Port == 0 {
 		config.Port = 3030
@@ -61,16 +61,16 @@ func setDefaults(config *Config) {
 
 	// 设置MQTT配置的默认值
 	if config.MQTT.ClientID == "" {
-		config.MQTT.ClientID = "xiaoai_client"
+		config.MQTT.ClientID = "bemfa_private"
 	}
 	if config.MQTT.Server == "" {
-		config.MQTT.Server = "localhost"
+		config.MQTT.Server = "bemfa.com"
 	}
 	if config.MQTT.Port == 0 {
-		config.MQTT.Port = 1883
+		config.MQTT.Port = 9501
 	}
 	if config.MQTT.Topic == "" {
-		config.MQTT.Topic = "xiaoai/control"
+		config.MQTT.Topic = "title"
 	}
 }
 

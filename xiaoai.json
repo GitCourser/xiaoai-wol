@@ -1,11 +1,11 @@
 {
-    "key": "testkey",
-    "mac": "00-E0-70-EC-FF-FF",
     "port": 3030,
+    "mac": "00-00-00-FF-FF-FF",
+    "xiaoai_key": "xiaoaikey",
     "mqtt": {
-        "client_id": "xiaoai_client",
-        "server": "localhost",
-        "port": 1883,
-        "topic": "xiaoai/control"
+        "client_id": "bemfa_private",
+        "topic": "title",
+        "server": "bemfa.com",
+        "port": 9501
     }
 }

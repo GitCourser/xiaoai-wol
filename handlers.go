@@ -83,13 +83,14 @@ func handleRoot(w http.ResponseWriter, r *http.Request) {
             <span class="slider"></span>
         </label>
         <span style="margin-left: 10px;">小爱API调试</span>
-		<a href="https://developers.xiaoai.mi.com/skill/create/index" target="_blank" style="margin-left: auto;">小米小爱技能开发平台</a>
+        <a href="https://developers.xiaoai.mi.com/skill/create/index" target="_blank" style="margin-left: auto;">小爱技能平台</a>
+        <a href="https://cloud.bemfa.com/tcp/devicemqtt.html" target="_blank" style="margin-left: auto;">巴法云MQTT</a>
     </div>
 
     <div class="mqtt-status" id="mqttStatus">
         <div style="display: flex; align-items: center;">
             <span class="status-indicator status-disabled" id="mqttIndicator"></span>
-            <strong>MQTT状态: </strong>
+            <strong>MQTT状态：</strong>
             <span id="mqttStatusText">检查中...</span>
         </div>
         <div class="mqtt-details" id="mqttDetails" style="display: none;">
@@ -335,24 +336,24 @@ func handleXiaoai(w http.ResponseWriter, r *http.Request, config Config, debugXi
 			NotUnderstand bool `json:"not_understand"`
 			OpenMic       bool `json:"open_mic"`
 			ToSpeak struct {
-				Type int    `json:"type"`
+				Type int8   `json:"type"`
 				Text string `json:"text"`
 			} `json:"to_speak"`
 			ToDisplay struct {
-				Type int    `json:"type"`
+				Type int8   `json:"type"`
 				Text string `json:"text"`
 			} `json:"to_display"`
 		}{
 			NotUnderstand: false,
 			OpenMic:       true,
 			ToSpeak: struct {
-				Type int    `json:"type"`
+				Type int8   `json:"type"`
 				Text string `json:"text"`
 			}{
 				Type: 0,
 			},
 			ToDisplay: struct {
-				Type int    `json:"type"`
+				Type int8   `json:"type"`
 				Text string `json:"text"`
 			}{
 				Type: 0,
@@ -449,7 +450,7 @@ func handleMQTTStatus(w http.ResponseWriter, r *http.Request, mqttManager *MQTTM
 
 	// 获取MQTT连接信息和状态
 	connectionInfo := mqttManager.GetConnectionInfo()
-	
+
 	// 构建响应数据，符合前端需求
 	response := map[string]interface{}{
 		"enabled":   true,

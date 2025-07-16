@@ -47,28 +47,28 @@ func (m *MQTTManager) Connect() error {
 // connectWithRetry 带重试机制的连接方法
 func (m *MQTTManager) connectWithRetry() error {
 	var lastErr error
-	
+
 	for attempt := 1; attempt <= m.maxRetries; attempt++ {
 		log.Printf("MQTT连接尝试 %d/%d", attempt, m.maxRetries)
-		
+
 		if err := m.doConnect(); err != nil {
 			lastErr = err
 			log.Printf("MQTT连接失败 (尝试 %d/%d): %v", attempt, m.maxRetries, err)
-			
+
 			if attempt < m.maxRetries {
 				log.Printf("等待 %v 后重试...", m.retryInterval)
 				time.Sleep(m.retryInterval)
 			}
 			continue
 		}
-		
+
 		log.Printf("MQTT连接成功 (尝试 %d/%d)", attempt, m.maxRetries)
-		
+
 		// 启动重连监控
 		go m.startReconnectMonitor()
 		return nil
 	}
-	
+
 	return fmt.Errorf("MQTT连接失败，已重试 %d 次，最后错误: %v", m.maxRetries, lastErr)
 }
 
@@ -90,7 +90,7 @@ func (m *MQTTManager) doConnect() error {
 		m.mutex.Lock()
 		m.connected = false
 		m.mutex.Unlock()
-		
+
 		// 触发重连
 		m.triggerReconnect()
 	})
@@ -102,7 +102,7 @@ func (m *MQTTManager) doConnect() error {
 		m.connected = true
 		m.isReconnecting = false
 		m.mutex.Unlock()
-		
+
 		// 连接成功后自动订阅主题，带重试
 		if err := m.subscribeWithRetry(); err != nil {
 			log.Printf("自动订阅失败: %v", err)
@@ -139,22 +139,22 @@ func (m *MQTTManager) Subscribe() error {
 // subscribeWithRetry 带重试机制的订阅方法
 func (m *MQTTManager) subscribeWithRetry() error {
 	var lastErr error
-	
+
 	for attempt := 1; attempt <= m.maxRetries; attempt++ {
 		if err := m.Subscribe(); err != nil {
 			lastErr = err
 			log.Printf("订阅失败 (尝试 %d/%d): %v", attempt, m.maxRetries, err)
-			
+
 			if attempt < m.maxRetries {
 				time.Sleep(m.retryInterval)
 			}
 			continue
 		}
-		
+
 		log.Printf("订阅成功 (尝试 %d/%d)", attempt, m.maxRetries)
 		return nil
 	}
-	
+
 	return fmt.Errorf("订阅失败，已重试 %d 次，最后错误: %v", m.maxRetries, lastErr)
 }
 
@@ -166,22 +166,22 @@ func (m *MQTTManager) Publish(message string) error {
 // publishWithRetry 带重试机制的发布方法
 func (m *MQTTManager) publishWithRetry(message string) error {
 	var lastErr error
-	
+
 	for attempt := 1; attempt <= m.maxRetries; attempt++ {
 		if err := m.doPublish(message); err != nil {
 			lastErr = err
 			log.Printf("发布消息失败 (尝试 %d/%d): %v", attempt, m.maxRetries, err)
-			
+
 			if attempt < m.maxRetries {
 				time.Sleep(m.retryInterval)
 			}
 			continue
 		}
-		
+
 		log.Printf("发布消息成功 (尝试 %d/%d)", attempt, m.maxRetries)
 		return nil
 	}
-	
+
 	return fmt.Errorf("发布消息失败，已重试 %d 次，最后错误: %v", m.maxRetries, lastErr)
 }
 
@@ -198,10 +198,10 @@ func (m *MQTTManager) doPublish(message string) error {
 	}
 
 	log.Printf("成功发布MQTT消息: 主题=%s, 消息=%s", m.config.Topic, message)
-	
+
 	// 更新本地状态
 	m.SetStatus(message)
-	
+
 	return nil
 }
 
@@ -230,7 +230,7 @@ func (m *MQTTManager) IsConnected() bool {
 func (m *MQTTManager) GetConnectionInfo() map[string]interface{} {
 	m.mutex.RLock()
 	defer m.mutex.RUnlock()
-	
+
 	return map[string]interface{}{
 		"connected": m.connected && m.client != nil && m.client.IsConnected(),
 		"status":    m.status,
@@ -244,20 +244,20 @@ func (m *MQTTManager) GetConnectionInfo() map[string]interface{} {
 func (m *MQTTManager) messageHandler(client mqtt.Client, msg mqtt.Message) {
 	message := string(msg.Payload())
 	log.Printf("收到MQTT消息: 主题=%s, 消息=%s", msg.Topic(), message)
-	
+
 	// 更新本地状态
 	m.SetStatus(message)
-	
+
 	// 处理"on"消息 - 执行唤醒功能
 	if message == "on" {
 		log.Printf("收到唤醒命令，正在执行唤醒操作...")
-		
+
 		// 异步执行唤醒操作，避免阻塞MQTT消息处理
 		go func() {
 			// 调用唤醒函数
 			wakeResult := wakeOnLan(m.macAddr)
 			log.Printf("\n%s", wakeResult)
-			
+
 			// 唤醒后延迟5秒后自动发送"off"消息
 			time.Sleep(5 * time.Second)
 			if err := m.Publish("off"); err != nil {
@@ -278,7 +278,7 @@ func (m *MQTTManager) triggerReconnect() {
 	}
 	m.isReconnecting = true
 	m.mutex.Unlock()
-	
+
 	// 非阻塞发送重连信号
 	select {
 	case m.reconnectChan <- true:
@@ -291,13 +291,13 @@ func (m *MQTTManager) triggerReconnect() {
 // startReconnectMonitor 启动重连监控
 func (m *MQTTManager) startReconnectMonitor() {
 	log.Printf("启动MQTT重连监控")
-	
+
 	for {
 		select {
 		case <-m.reconnectChan:
 			log.Printf("开始MQTT重连...")
 			m.handleReconnect()
-			
+
 		case <-m.stopReconnect:
 			log.Printf("停止MQTT重连监控")
 			return
@@ -310,23 +310,23 @@ func (m *MQTTManager) handleReconnect() {
 	// 使用指数退避策略进行重连
 	backoffInterval := m.retryInterval
 	maxBackoff := 60 * time.Second
-	
+
 	for attempt := 1; attempt <= m.maxRetries; attempt++ {
 		log.Printf("MQTT重连尝试 %d/%d", attempt, m.maxRetries)
-		
+
 		// 先断开现有连接
 		if m.client != nil && m.client.IsConnected() {
 			m.client.Disconnect(250)
 		}
-		
+
 		// 尝试重新连接
 		if err := m.doConnect(); err != nil {
 			log.Printf("MQTT重连失败 (尝试 %d/%d): %v", attempt, m.maxRetries, err)
-			
+
 			if attempt < m.maxRetries {
 				log.Printf("等待 %v 后重试重连...", backoffInterval)
 				time.Sleep(backoffInterval)
-				
+
 				// 指数退避，但不超过最大值
 				backoffInterval *= 2
 				if backoffInterval > maxBackoff {
@@ -335,16 +335,16 @@ func (m *MQTTManager) handleReconnect() {
 			}
 			continue
 		}
-		
+
 		log.Printf("MQTT重连成功 (尝试 %d/%d)", attempt, m.maxRetries)
 		return
 	}
-	
+
 	log.Printf("MQTT重连失败，已重试 %d 次", m.maxRetries)
 	m.mutex.Lock()
 	m.isReconnecting = false
 	m.mutex.Unlock()
-	
+
 	// 重连失败后，等待一段时间再次尝试
 	go func() {
 		time.Sleep(30 * time.Second)
@@ -360,18 +360,18 @@ func (m *MQTTManager) Disconnect() {
 	case m.stopReconnect <- true:
 	default:
 	}
-	
+
 	if m.client != nil && m.client.IsConnected() {
 		// 取消订阅
 		if token := m.client.Unsubscribe(m.config.Topic); token.Wait() && token.Error() != nil {
 			log.Printf("取消订阅失败: %v", token.Error())
 		}
-		
+
 		// 断开连接
 		m.client.Disconnect(250)
 		log.Printf("MQTT连接已断开")
 	}
-	
+
 	m.mutex.Lock()
 	m.connected = false
 	m.isReconnecting = false
