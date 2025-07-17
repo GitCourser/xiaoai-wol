@@ -2,17 +2,23 @@
 前提：需要一台长期开机的设备（比如路由器）  
 方式有下面两种
 
-### 1. 小米小爱开放平台
+### 1. 小米小爱开放平台（不推荐）
 此平台已不让注册，已注册的可用，还必须有公网  
 [创建小爱技能](https://developers.xiaoai.mi.com/skill/create/index)  
 配置文件中 `xiaoai_key` 填你生成的技能的 `key_id`
 
-### 2. 巴法云平台
+### 2. 巴法云平台（推荐）
 此平台是注册最简单的平台，可用邮箱注册，因为用MQTT，所以不需要公网  
 此平台支持4种家居平台：小爱、小度、Google、亚马逊  
-在米家添加第三方设备找`巴法`，其他语音助手类似。  
+这些用助手APP语音就能控制，音箱并不是必须的
+```
+米家app -> 添加第三方设备 -> "巴法"，绑定后所有小爱都能用（app，音箱，手环）
+小度app -> 添加第三方设备 -> "巴法"
+Google助理 -> 设备 -> "be home"
+亚马逊Alexa -> 技能 -> "be home"
+```
 [巴法云](https://cloud.bemfa.com/web/user/index)  
-[巴法云文档](https://cloud.bemfa.com/docs/#/)
+[巴法云MQTT控制台](https://cloud.bemfa.com/tcp/devicemqtt.html)
 
 需要在配置文件中填写:  
 `client_id` 你的巴法云私钥  
