@@ -1,0 +1,15 @@
+$:
+  vscode:
+    - docker:
+        image: docker.cnb.cool/cnb.cc/docker/debian-vnc
+      services:
+        - vscode
+        - docker
+      stages:
+        - name: script
+          script: |
+            sed -i '/^[[:space:]]*export HOME=/d' /etc/profile
+            chmod 757 /workspace
+            curl -fsSL https://cnb.cool/cnb.cc/Docker/-/git/raw/main/.script/install-tool.sh | sh
+            curl -fsSL https://cnb.cool/cnb.cc/Docker/-/git/raw/main/.script/install-rust.sh | bash
+            curl -fsSL https://cnb.cool/cnb.cc/Docker/-/git/raw/main/.script/up_cnb_profiles.sh | bash
