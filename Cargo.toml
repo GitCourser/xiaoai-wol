@@ -1,0 +1,15 @@
+[package]
+name = "xiaoai-wol"
+version = "0.3.0"
+edition = "2024"
+description = "Lightweight Wake-on-LAN & MQTT controller for routers"
+license = "MIT"
+
+[dependencies]
+
+[profile.release]
+opt-level = "z"
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true

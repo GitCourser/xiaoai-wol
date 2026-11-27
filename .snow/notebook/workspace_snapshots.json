@@ -1,0 +1,24 @@
+{
+  "bfbed9f7-9310-425a-a4dd-71ccf331102e:31": [
+    {
+      "op": "add",
+      "notebookId": "notebook-1795692288177_70snrstwy"
+    },
+    {
+      "op": "add",
+      "notebookId": "notebook-1795692288177_wxpnuuf9y"
+    }
+  ],
+  "5f4dab8f-fd55-431f-823b-ae5ba063e89b:1": [
+    {
+      "op": "update",
+      "notebookId": "notebook-1795692288177_wxpnuuf9y",
+      "previousNote": "run_forever() retries infinitely with exponential backoff (2s..30s) both on startup failure and runtime disconnect, resetting backoff after CONNACK+SUBACK. Keep-alive uses 45s PINGREQ / 15s PINGRESP timeout."
+    },
+    {
+      "op": "update",
+      "notebookId": "notebook-1795692288177_70snrstwy",
+      "previousNote": "Zero-dependency MQTT 3.1.1 client over std::net::TcpStream targeting low-ROM/RAM routers (457KB release binary, ~1.2MB VmRSS)."
+    }
+  ]
+}

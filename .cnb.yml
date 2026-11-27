@@ -1,4 +1,14 @@
 $:
+  push:
+    - imports: https://cnb.cool/cnb.cc/secret/-/blob/main/env.github.yml
+      stages:
+        - name: sync to github
+          image: tencentcom/git-sync
+          settings:
+            target_url: https://github.com/GitCourser/xiaoai-wol.git
+            username: ${GITHUB_USER}
+            password: ${GITHUB_TOKEN}
+
   vscode:
     - docker:
         image: docker.cnb.cool/cnb.cc/docker/debian-vnc

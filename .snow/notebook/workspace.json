@@ -1,0 +1,18 @@
+{
+  "src/mqtt.rs": [
+    {
+      "id": "notebook-1795692288177_wxpnuuf9y",
+      "filePath": "src/mqtt.rs",
+      "note": "run_forever() 在启动失败和运行时断连时均以指数退避（2s..30s）无限重试，收到 CONNACK+SUBACK 后重置退避间隔。保活心跳采用 45s 发送 PINGREQ、15s 等待 PINGRESP 超时。",
+      "createdAt": "2026-11-26T19:24:48.177",
+      "updatedAt": "2026-11-26T19:45:18.015"
+    },
+    {
+      "id": "notebook-1795692288177_70snrstwy",
+      "filePath": "src/mqtt.rs",
+      "note": "基于 std::net::TcpStream 的零依赖 MQTT 3.1.1 客户端，面向低 ROM/RAM 路由器（release 产物 457KB，VmRSS 约 1.2MB）。",
+      "createdAt": "2026-11-26T19:24:48.177",
+      "updatedAt": "2026-11-26T19:45:18.107"
+    }
+  ]
+}

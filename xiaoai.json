@@ -1,11 +1,10 @@
 {
-    "port": 3030,
-    "mac": "00-00-00-FF-FF-FF",
-    "xiaoai_key": "xiaoaikey",
-    "mqtt": {
-        "client_id": "bemfa_private",
-        "topic": "title",
-        "server": "bemfa.com",
-        "port": 9501
-    }
+  "port": 3030,
+  "mac": "00-00-00-FF-FF-FF",
+  "mqtt": {
+    "client_id": "bemfa_private",
+    "topic": "title",
+    "server": "bemfa.com",
+    "port": 9501
+  }
 }
